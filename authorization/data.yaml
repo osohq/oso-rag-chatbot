@@ -1,0 +1,6 @@
+facts:
+  has_relation(Document:_, folder, Folder:_):
+    query: SELECT id, folder_id FROM "document"
+
+  has_relation(Block:_, document, Document:_):
+    query: SELECT id, document_id FROM "block"

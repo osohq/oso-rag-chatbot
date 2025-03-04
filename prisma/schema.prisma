@@ -1,0 +1,40 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [uuid_ossp(map: "uuid-ossp", schema: "extensions"), vector(schema: "extensions")]
+}
+
+model block {
+  id          Int                    @id @default(autoincrement())
+  document_id Int?
+  content     String
+  embedding   Unsupported("vector")?
+  document    document?              @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model document {
+  id        Int     @id @default(autoincrement())
+  folder_id Int?
+  title     String
+  block     block[]
+  folder    folder? @relation(fields: [folder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model folder {
+  id       Int        @id @default(autoincrement())
+  team_id  Int?
+  name     String
+  document document[]
+  team     team?      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model team {
+  id     Int      @id @default(autoincrement())
+  name   String
+  folder folder[]
+}
