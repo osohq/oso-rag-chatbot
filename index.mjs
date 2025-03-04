@@ -5,7 +5,9 @@ import { oso, openai, prisma, addFacts, insertBlocks } from './data.mjs';
 
 const rl = readline.createInterface({ input, output });
 
-async function handlePrompt(user, prompt) {
+async function handlePrompt(user, prompt, threshold=0.3) {
+  // convert the user's prompt to a vector using
+  // the llm that we used to generate the context embeddings
   const promptEmbedding = await openai.embeddings.create({
       model: "text-embedding-3-large",
       input: prompt,
@@ -13,6 +15,7 @@ async function handlePrompt(user, prompt) {
     response["data"][0]["embedding"]
   );
 
+  // Generate a filter from the externalized authorization logic
   const authorizationFilter = await oso.listLocal(
     { type: "User", id: user },
     "view",
@@ -20,6 +23,7 @@ async function handlePrompt(user, prompt) {
     "id"
   );
 
+  // Use the filter to determine the complete list of blocks this user is allowed to use
   const blockIds = await prisma.$queryRawUnsafe(
     `SELECT id FROM block WHERE ${authorizationFilter}`
   ).then( rows =>
@@ -31,12 +35,21 @@ async function handlePrompt(user, prompt) {
     return
   } 
 
+  // Restrict the similarity search to blocks this user is allowed to view
   const authorizedBlocks =
-    await prisma.$queryRaw`SELECT id, document_id, content, 1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity FROM block WHERE id IN (${Prisma.join(blockIds)}) AND (1 - (embedding::vector <=> ${promptEmbedding}::vector)) > 0.3`;
+    await prisma.$queryRaw`SELECT
+        id,
+        document_id,
+        content,
+        1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity
+      FROM block 
+      WHERE id IN (${Prisma.join(blockIds)})
+      AND (1 - (embedding::vector <=> ${promptEmbedding}::vector)) > ${threshold}`;
 
   console.log();
   console.log("I'll send the following additional context:");
 
+  // return the authorized blocks and their similarity scores
   authorizedBlocks.map(block => {
     console.log(`(Similarity: ${block.similarity.toPrecision(3)}) ${block.content}`);
   })
@@ -65,7 +78,8 @@ async function promptUser() {
       return;
     }
 
-    await handlePrompt(user, prompt);
+    const similarityThreshold = 0.3
+    await handlePrompt(user, prompt, similarityThreshold);
     console.log();
 
     await promptUser();
