@@ -15,6 +15,7 @@ resource Folder{
 
   "viewer" if "member" on "team";
   "viewer" if global "hr";
+  "viewer" if is_public(resource);
 
   "view" if "viewer";
 }
@@ -45,17 +46,26 @@ test "Polar testing and iteration" {
 
     has_relation(Folder{"hr"}, "team", Team{"hr"});
     has_relation(Folder{"engineering"}, "team", Team{"engineering"});
+    is_public(Folder{"public"});
 
     has_relation(Document{"bob-private"}, "folder", Folder{"hr"});
     has_relation(Document{"bob-public"}, "folder", Folder{"engineering"});
+    has_relation(Document{"all-public"}, "folder", Folder{"public"});
 
     has_relation(Block{"block1"}, "document", Document{"bob-private"});
     has_relation(Block{"block2"}, "document", Document{"bob-public"});
+    has_relation(Block{"block3"}, "document", Document{"all-public"});
   }
 
   assert allow(User{"alice"}, "view", Block{"block1"});
   assert allow(User{"alice"}, "view", Block{"block2"});
+  assert allow(User{"alice"}, "view", Block{"block3"});
 
   assert_not allow(User{"bob"}, "view", Block{"block1"});
   assert allow(User{"bob"}, "view", Block{"block2"});
+  assert allow(User{"bob"}, "view", Block{"block3"});
+
+  assert_not allow(User{"charlie"}, "view", Block{"block1"});
+  assert_not allow(User{"charlie"}, "view", Block{"block2"});
+  assert allow(User{"charlie"}, "view", Block{"block3"});
 }

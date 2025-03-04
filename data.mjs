@@ -1,7 +1,11 @@
-import { Oso } from "oso-cloud"
+import { Oso } from "oso-cloud";
+import OpenAI from "openai";
 import { PrismaClient } from "@prisma/client";
+import blocks from "./data/blocks.json" with { type: "json" };
+import facts from "./data/facts.json" with { type: "json" };
 
 export const prisma = new PrismaClient()
+export const openai = new OpenAI();
 
 export const oso = new Oso(
   process.env.OSO_URL,
@@ -10,39 +14,9 @@ export const oso = new Oso(
 );
 
 export async function addFacts(){
-  await oso.insert([
-    "has_role",
-    {type: "User", id: "diane"},
-    "hr"
-  ]);
-
-  await oso.insert([
-    "has_role",
-    {type: "User", id: "diane"},
-    "member",
-    {type: "Team", id: "1"}
-  ]);
-
-  await oso.insert([
-    "has_role",
-    {type: "User", id: "bob"},
-    "member",
-    {type: "Team", id: "2"}
-  ]);
-
-  await oso.insert([
-    "has_relation",
-    {type: "Folder", id: "1"},
-    "team",
-    {type: "Team", id: "1"}
-  ]);
-
-  await oso.insert([
-    "has_relation",
-    {type: "Folder", id: "2"},
-    "team",
-    {type: "Team", id: "2"}
-  ]);
+  for (const fact of facts) {
+    await oso.insert(fact)
+  }
 }
 
 export async function insertBlocks() {
@@ -51,23 +25,14 @@ export async function insertBlocks() {
     return;
   }
 
-  const block1 = "Alice says that Bob is horrible to work with."
-  const embedding1 = await openai.embeddings.create({
-    model: "text-embedding-3-large",
-    input: block1,
-  }).then(response =>
-    response["data"][0]["embedding"]
-  );
+  for (const block of blocks){
+    const embedding = await openai.embeddings.create({
+      model: "text-embedding-3-large",
+      input: block.content,
+    }).then(response =>
+      response["data"][0]["embedding"]
+    );
 
-  const block2 = "Bob should seek opportunities to improve his collaboration."
-  const embedding2 = await openai.embeddings.create({
-    model: "text-embedding-3-large",
-    input: block2,
-  }).then(response =>
-    response["data"][0]["embedding"]
-  );
-
-  // insert the text and embeddings
-  await prisma.$executeRaw`INSERT INTO block (document_id, content, embedding) VALUES (1, ${block1}, ${JSON.stringify(embedding1)}::vector)`;
-  await prisma.$executeRaw`INSERT INTO block (document_id, content, embedding) VALUES (1, ${block2}, ${JSON.stringify(embedding2)}::vector)`;
+    await prisma.$executeRaw`INSERT INTO block (document_id, content, embedding) VALUES (${block.document_id}, ${block.content}, ${JSON.stringify(embedding)}::vector)`;
+  };
 }

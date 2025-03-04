@@ -4,3 +4,6 @@ facts:
 
   has_relation(Block:_, document, Document:_):
     query: SELECT id, document_id FROM "block"
+
+  is_public(Folder:_):
+    query: SELECT id FROM "folder" WHERE is_public=true

@@ -1,10 +1,8 @@
-import OpenAI from "openai";
 import { Prisma } from '@prisma/client'
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import { oso, prisma, addFacts, insertBlocks } from './data.mjs';
+import { oso, openai, prisma, addFacts, insertBlocks } from './data.mjs';
 
-const openai = new OpenAI();
 const rl = readline.createInterface({ input, output });
 
 async function handlePrompt(user, prompt) {
@@ -34,9 +32,10 @@ async function handlePrompt(user, prompt) {
   } 
 
   const authorizedBlocks =
-    await prisma.$queryRaw`SELECT id, document_id, content, 1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity FROM block WHERE id IN (${Prisma.join(blockIds)})`;
+    await prisma.$queryRaw`SELECT id, document_id, content, 1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity FROM block WHERE id IN (${Prisma.join(blockIds)}) AND (1 - (embedding::vector <=> ${promptEmbedding}::vector)) > 0.3`;
 
-  console.log("I'll send the follwoing additional context:");
+  console.log();
+  console.log("I'll send the following additional context:");
 
   authorizedBlocks.map(block => {
     console.log(`(Similarity: ${block.similarity.toPrecision(3)}) ${block.content}`);
@@ -51,13 +50,16 @@ await addFacts();
 
 async function promptUser() {
   try {
-    const user = await rl.question('Who are you? ');
-    if (user.toLowerCase() === 'exit') {
+    console.log();
+
+    const user = (await rl.question('Who are you? ')).toLowerCase();
+    if (user === 'exit') {
       rl.close();
       return;
     }
+    const userCapitalized = user.charAt(0).toUpperCase() + user.slice(1);
 
-    const prompt = await rl.question(`Hi, ${user}! What would you like to ask? `);
+    const prompt = await rl.question(`Hi, ${userCapitalized}! What would you like to ask? `);
     if (prompt.toLowerCase() === 'exit') {
       rl.close();
       return;
