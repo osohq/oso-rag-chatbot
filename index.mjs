@@ -55,12 +55,6 @@ async function handlePrompt(user, prompt, threshold=0.3) {
   })
 }
 
-// Insert some sample text with embeddings.
-await insertBlocks();
-
-// Add some facts
-await addFacts();
-
 async function promptUser() {
   try {
     console.log();
@@ -88,4 +82,11 @@ async function promptUser() {
   };
 }
   
+// Insert some sample text with embeddings.
+await insertBlocks();
+
+// Add some facts
+await addFacts();
+
+// Listen for questions
 await promptUser();
