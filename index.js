@@ -1,10 +1,11 @@
 import { Prisma } from '@prisma/client'
 import pino from 'pino';
-
+import PinoPretty from 'pino-pretty';
 import { oso, openai, prisma, addFacts, insertBlocks } from './data.js';
 import { createCli } from './cli.js';
 
-const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
+const stream = new PinoPretty({colorize:true});
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' }, stream);
 
 async function handlePrompt(user, prompt, threshold=0.3) {
   // convert the user's prompt to a vector using
@@ -24,6 +25,7 @@ async function handlePrompt(user, prompt, threshold=0.3) {
     "id"
   );
 
+  logger.debug("Authorization filter query from Oso:")
   logger.debug(authorizationFilter);
 
   // Use the filter to determine the complete list of blocks this user is allowed to use
@@ -33,15 +35,17 @@ async function handlePrompt(user, prompt, threshold=0.3) {
     rows.map( row => Prisma.sql`${row.id}::integer` )
   )
 
+  logger.debug(`Block IDs: ${blockIds}`);
+
   logger.debug("Authorized blocks query:");
   logger.debug(`SELECT
       id,
       document_id,
       content,
-      1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity
+      1 - (embedding::vector <=> promptEmbedding::vector) as similarity
     FROM block 
     WHERE id IN (${Prisma.join(blockIds)})
-    AND (1 - (embedding::vector <=> ${promptEmbedding}::vector)) > ${threshold}`);
+    AND (1 - (embedding::vector <=> promptEmbedding::vector)) > ${threshold}`);
 
   // Restrict the similarity search to blocks this user is allowed to view
   const authorizedBlocks =
@@ -60,7 +64,9 @@ async function handlePrompt(user, prompt, threshold=0.3) {
   // return the authorized blocks and their similarity scores
   authorizedBlocks.map(block => {
     console.log(`(Similarity: ${block.similarity.toPrecision(3)}) ${block.content}`);
-  })
+  });
+
+  console.log();
 }
 
 // Insert some sample text with embeddings.
