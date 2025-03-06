@@ -1,9 +1,10 @@
 import { Prisma } from '@prisma/client'
-import * as readline from 'node:readline/promises';
-import { stdin as input, stdout as output } from 'node:process';
-import { oso, openai, prisma, addFacts, insertBlocks } from './data.mjs';
+import pino from 'pino';
 
-const rl = readline.createInterface({ input, output });
+import { oso, openai, prisma, addFacts, insertBlocks } from './data.js';
+import { createCli } from './cli.js';
+
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
 async function handlePrompt(user, prompt, threshold=0.3) {
   // convert the user's prompt to a vector using
@@ -23,17 +24,24 @@ async function handlePrompt(user, prompt, threshold=0.3) {
     "id"
   );
 
+  logger.debug(authorizationFilter);
+
   // Use the filter to determine the complete list of blocks this user is allowed to use
   const blockIds = await prisma.$queryRawUnsafe(
     `SELECT id FROM block WHERE ${authorizationFilter}`
   ).then( rows =>
     rows.map( row => Prisma.sql`${row.id}::integer` )
   )
-  
-  if ( blockIds.length === 0 ){
-    console.log(`I won't send any additional context.`)
-    return
-  } 
+
+  logger.debug("Authorized blocks query:");
+  logger.debug(`SELECT
+      id,
+      document_id,
+      content,
+      1 - (embedding::vector <=> ${promptEmbedding}::vector) as similarity
+    FROM block 
+    WHERE id IN (${Prisma.join(blockIds)})
+    AND (1 - (embedding::vector <=> ${promptEmbedding}::vector)) > ${threshold}`);
 
   // Restrict the similarity search to blocks this user is allowed to view
   const authorizedBlocks =
@@ -55,33 +63,6 @@ async function handlePrompt(user, prompt, threshold=0.3) {
   })
 }
 
-async function promptUser() {
-  try {
-    console.log();
-
-    const user = (await rl.question('Who are you? ')).toLowerCase();
-    if (user === 'exit') {
-      rl.close();
-      return;
-    }
-    const userCapitalized = user.charAt(0).toUpperCase() + user.slice(1);
-
-    const prompt = await rl.question(`Hi, ${userCapitalized}! What would you like to ask? `);
-    if (prompt.toLowerCase() === 'exit') {
-      rl.close();
-      return;
-    }
-
-    const similarityThreshold = 0.3
-    await handlePrompt(user, prompt, similarityThreshold);
-    console.log();
-
-    await promptUser();
-  } finally {
-    await prisma.$disconnect()
-  };
-}
-  
 // Insert some sample text with embeddings.
 await insertBlocks();
 
@@ -89,4 +70,4 @@ await insertBlocks();
 await addFacts();
 
 // Listen for questions
-await promptUser();
+await createCli(handlePrompt);

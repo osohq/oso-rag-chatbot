@@ -1,8 +1,12 @@
 {
+  "type": "module",
   "dependencies": {
     "@prisma/client": "^6.4.1",
+    "commander": "^13.1.0",
+    "inquirer": "^12.4.2",
     "openai": "^4.86.1",
-    "oso-cloud": "^2.4.4"
+    "oso-cloud": "^2.4.4",
+    "pino": "^9.6.0"
   },
   "devDependencies": {
     "prisma": "^6.4.1"
