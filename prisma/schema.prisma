@@ -26,11 +26,12 @@ model document {
 }
 
 model folder {
-  id       Int        @id @default(autoincrement())
-  team_id  Int?
-  name     String
-  document document[]
-  team     team?      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        Int        @id @default(autoincrement())
+  team_id   Int?
+  name      String
+  is_public Boolean
+  document  document[]
+  team      team?      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model team {

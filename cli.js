@@ -1,7 +1,19 @@
 import { Command } from "commander";
 import inquirer from "inquirer";
+import { handlePrompt } from "./app.js";
+import { deleteAllData, insertBlocks, insertDocuments, insertFolders, insertTeams } from "./data.js";
+import { addFacts } from "./authz.js";
 
-async function askQuestionsAndRespond(user, callback){
+async function initialize(){
+  await deleteAllData();
+  await insertTeams();
+  await insertFolders();
+  await insertDocuments();
+  await insertBlocks();
+  await addFacts();
+}
+
+async function askQuestionsAndRespond(user){
   const questionPrompt = {
      type: 'input',
      name: 'question',
@@ -15,11 +27,11 @@ async function askQuestionsAndRespond(user, callback){
     return;
   }
 
-  await callback(user, question);
-  await askQuestionsAndRespond(user, callback);
+  await handlePrompt(user, question);
+  await askQuestionsAndRespond(user);
 }
 
-async function startCommand(callback){
+async function start(){
   const userPrompt = {
     type: 'input',
     name: 'username',
@@ -29,23 +41,28 @@ async function startCommand(callback){
   const user = await inquirer.prompt(userPrompt)
     .then(response => response.username);
 
-  await askQuestionsAndRespond(user.toLowerCase(), callback);
+  await askQuestionsAndRespond(user.toLowerCase());
 
   console.log('Thank you for chatting.');
 }
 
-export async function createCli(callback){
-  const cli = new Command();
+// This is the main app
+// It defines the CLI that the user interacts with
+const cli = new Command();
 
-  cli
-    .name('oso-rag-chatbot')
-    .description('Demo app to illustrate authorizing RAG chatbot responses with Oso Cloud.')
-    .version('0.0.1');
-  
-  cli
-    .command('start')
-    .description('Start the chatbot')
-    .action(() => startCommand(callback));
+cli
+  .name('oso-rag-chatbot')
+  .description('Demo app to illustrate authorizing RAG chatbot responses with Oso Cloud.')
+  .version('0.0.1');
 
-    cli.parse();
-}
+cli
+  .command('start')
+  .description('Start the chatbot')
+  .action(() => start());
+
+cli
+  .command('initialize')
+  .description('Initialize the database and Oso Cloud environment')
+  .action(() => initialize());
+
+cli.parseAsync();

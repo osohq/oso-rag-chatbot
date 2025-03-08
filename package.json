@@ -1,12 +1,17 @@
 {
   "type": "module",
+  "scripts": {
+    "initialize": "node cli.js initialize",
+    "start": "node cli.js start"
+  },
   "dependencies": {
     "@prisma/client": "^6.4.1",
     "commander": "^13.1.0",
+    "debug": "^4.4.0",
+    "dotenv": "^16.4.7",
     "inquirer": "^12.4.2",
     "openai": "^4.86.1",
     "oso-cloud": "^2.4.4",
-    "pino": "^9.6.0",
     "pino-pretty": "^13.0.0"
   },
   "devDependencies": {

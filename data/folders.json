@@ -1,0 +1,17 @@
+[
+  {
+    "team_id": 1,
+    "name": "hr",
+    "is_public": false
+  },
+  {
+    "team_id": 2,
+    "name": "engineering",
+    "is_public": false
+  },
+  {
+    "team_id": 3,
+    "name": "public",
+    "is_public": true
+  }
+]
