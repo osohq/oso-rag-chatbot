@@ -69,6 +69,7 @@ export async function generateChatbotResponse(prompt, context){
     store: true,
   });
 
+  llmDebug("Response:");
   llmDebug(response);
   return `${response.choices[0].message.content}\n`;
 }

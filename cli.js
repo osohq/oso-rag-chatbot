@@ -1,16 +1,12 @@
 import { Command } from "commander";
 import inquirer from "inquirer";
 import { handlePrompt } from "./app.js";
-import { deleteAllData, insertBlocks, insertDocuments, insertFolders, insertTeams } from "./data.js";
-import { addFacts } from "./authz.js";
+import { initializeDatabase } from "./data.js";
+import { initializeOso } from "./authz.js";
 
 async function initialize(){
-  await deleteAllData();
-  await insertTeams();
-  await insertFolders();
-  await insertDocuments();
-  await insertBlocks();
-  await addFacts();
+  await initializeDatabase(),
+  await initializeOso();
 }
 
 async function askQuestionsAndRespond(user){

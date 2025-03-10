@@ -1,5 +1,6 @@
 import { Oso } from "oso-cloud";
 import debug from "debug";
+import fs from "fs";
 import facts from "./data/facts.json" with { type: "json" };
 
 const authzDebug = new debug('authz');
@@ -31,10 +32,33 @@ export async function getAuthorizationFilter(user) {
 // Initialization functions
 // ****************************************************************
 
+export async function initializeOso(){
+  authzDebug("Initializing Oso...");
+
+  await loadPolicy();
+  await addFacts();
+
+  authzDebug("Oso is initialized.");
+}
+
+async function loadPolicy(){
+  authzDebug("Loading policy...");
+
+  const policy = fs.readFileSync('./authorization/policy.polar',
+    { encoding: 'utf8', flag: 'r' }); 
+
+  await oso.policy(policy);
+
+  authzDebug("Loaded policy:");
+  authzDebug(await oso.getPolicyMetadata());
+}
+
 // Populate Oso environment with facts from ./data/facts.json
-export async function addFacts(){
+async function addFacts(){
+  authzDebug("Adding facts...");
+
   for (const fact of facts) {
-    authzDebug(`Adding fact: ${fact}`);
+    authzDebug(`Adding fact: ${fact[0].toString()}`);
     await oso.insert(fact);
   }
 }
