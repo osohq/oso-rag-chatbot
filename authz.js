@@ -5,9 +5,11 @@ import facts from "./data/facts.json" with { type: "json" };
 
 const authzDebug = new debug('authz');
 
+// default to using the local dev server
+// if environment variables aren't set
 export const oso = new Oso(
-  process.env.OSO_URL,
-  process.env.OSO_AUTH,
+  process.env.OSO_URL || "http://localhost:8080",
+  process.env.OSO_AUTH || "e_0123456789_12345_osotesttoken01xiIn",
   { dataBindings: "authorization/data.yaml" }
 );
 

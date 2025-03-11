@@ -8,16 +8,14 @@ import { generateEmbedding, generateChatbotResponse } from './llm.js';
 const mainDebug = new debug('main');
 
 export async function handlePrompt(user, prompt, threshold=0.3) {
-  // convert the user's prompt to a vector using
-  // the llm that we used to generate the context embeddings
+  // Step 2: Convert the user's prompt to an embedding
   const promptEmbedding = await generateEmbedding(prompt)
 
-  // Get an authorization filter from Oso Cloud
+  // Step 3: Get an authorization filter from Oso Cloud
   const authorizationFilter = await getAuthorizationFilter(user);
 
-  // Use the authorization filter and the prompt embedding
-  // to get the list of related blocks (based on threshold)
-  // that this user is allowed to use
+  // Step 4: Get the authorized context
+  //         from the embeddings database
   const authorizedBlocks = await getAuthorizedBlocks(promptEmbedding, authorizationFilter, threshold);
 
   // Write the authorized blocks and their similarity scores to debug logs
@@ -30,8 +28,10 @@ export async function handlePrompt(user, prompt, threshold=0.3) {
   // to be passed to the LLM as context
   const context = authorizedBlocks.map( block => block.content ).join("");
 
-  // Send the prompt and context to the chatbot and display the response
+  // Send the prompt and context to the chatbot
   const response = await generateChatbotResponse(prompt, context);
+
+  //Step 6: Display the response
   console.log(response);
 }
 

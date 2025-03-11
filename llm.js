@@ -7,7 +7,7 @@ const openai = new OpenAI();
 
 // Generate a vector embedding from the submitted prompt
 export async function generateEmbedding(prompt) {
-  const embeddingsModel = 'text-embedding-3-large'
+  const embeddingsModel = 'text-embedding-3-small'
   llmDebug(`Model: ${embeddingsModel}`);
   llmDebug(`Prompt: ${prompt}`);
 
