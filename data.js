@@ -12,6 +12,7 @@ export const prisma = new PrismaClient()
 
 // Get the blocks from the database that pass the authorization filter
 export async function getAuthorizedBlocks(promptEmbedding, authorizationFilter, threshold){
+  // Get the ids of the blocks that this user is allowed to view
   const blockIdRows = await prisma.$queryRawUnsafe(
     `SELECT id FROM block WHERE ${authorizationFilter}`
   );

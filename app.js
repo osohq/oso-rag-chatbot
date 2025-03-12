@@ -24,11 +24,9 @@ export async function handlePrompt(user, prompt, threshold=0.3) {
     mainDebug(`(Similarity: ${block.similarity.toPrecision(3)}) ${block.content}`);
   });
 
-  // Convert the block text to a single string
-  // to be passed to the LLM as context
-  const context = authorizedBlocks.map( block => block.content ).join("");
 
-  // Send the prompt and context to the chatbot
+  // Step 5: Send the prompt and context to the chatbot
+  const context = authorizedBlocks.map( block => block.content ).join("");
   const response = await generateChatbotResponse(prompt, context);
 
   //Step 6: Display the response
