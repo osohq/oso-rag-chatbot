@@ -14,7 +14,6 @@
     "oso-cloud": "^2.4.4"
   },
   "devDependencies": {
-    "prisma": "^6.4.1",
-    "supabase": "^2.15.8"
+    "prisma": "^6.4.1"
   }
 }
