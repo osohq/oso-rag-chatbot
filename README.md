@@ -21,6 +21,11 @@ A CLI demo app that uses Oso to authorize context vector embeddings before sendi
     ```bash
     docker run -p '8080:8080' public.ecr.aws/osohq/dev-server:latest
     ```
+1. Local Supabase environment
+    ```
+    npx supabase init
+    npx supabase start
+    ```
 
 ### Clone this repository
 
@@ -41,13 +46,6 @@ git clone https://github.com/osohq/oso-rag-chatbot.git
 ```
 cd oso-rag-chatbot
 npm install
-```
-
-### Start local Supabase environment
-
-```
-npx supabase init
-npx supabase start
 ```
 
 ### Initialize the database and Oso Dev Server
