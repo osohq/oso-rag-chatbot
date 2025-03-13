@@ -92,7 +92,7 @@ There are two required environment variables and three optional ones:
 * `OPENAI_API_KEY`: (required) The API key used for OpenAI LLM operations. You can get a key [here](https://platform.openai.com/api-keys) after creating an account. 
 * `OSO_URL`: (optional) The URL of the Oso Cloud instance used for authorization. Defaults to `http://localhost:8080`
 * `OSO_AUTH`: (optional) The API key used for Oso Cloud operations. Defaults to the Local Dev Server key: `e_0123456789_12345_osotesttoken01xiIn`
-* `DEBUG`: (optional) Used to emit various debugging information. Defaults to "" (no debug logging). Can be set to any combination of the following as a comma-delimited string:
+* `DEBUG`: (optional) Used to emit various debugging information. Unset by default (no debug logging). Can be set to any combination of the following as a comma-delimited string:
     * `main`: Emit the context sent to the chatbot as plain text.
     * `authz`: Emit information about authorization operations.
     * `data`: Emit information about database operations.

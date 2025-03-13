@@ -1,4 +1,4 @@
-[
+export const facts = [
     [ "has_role", {"type": "User", "id": "diane"}, "hr" ],
     [ "has_role", {"type": "User", "id": "diane"}, "member", {"type": "Team", "id": "1"} ],
     [ "has_role", {"type": "User", "id": "bob"}, "member", {"type": "Team", "id": "2"} ],

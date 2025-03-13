@@ -1,7 +1,7 @@
 import { Oso } from "oso-cloud";
 import debug from "debug";
 import fs from "fs";
-import facts from "./data/facts.json" with { type: "json" };
+import { facts } from "./data/facts.js";
 
 const authzDebug = new debug('authz');
 
