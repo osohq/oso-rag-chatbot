@@ -30,6 +30,7 @@ async function askQuestionsAndRespond(user){
   await askQuestionsAndRespond(user);
 }
 
+// Step 1: identify the user and listen for questions
 async function start(){
   const userPrompt = {
     type: 'input',
