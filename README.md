@@ -64,7 +64,7 @@ npm run start
 
 ## Scenario
 
-The chatbot models an internal company chatbot. It can accept context from internal company documents, which are stored in the Supabase PostgreSQL database you created above.
+The app models a company chatbot. It can accept context from internal company documents, which are stored in the Supabase PostgreSQL database you created above.
 
 The chatbot is aware of two users:
 
