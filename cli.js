@@ -4,11 +4,11 @@ import 'dotenv/config';
 import { Command } from "commander";
 import inquirer from "inquirer";
 import { handlePrompt } from "./app.js";
-import { initializeDatabase } from "./data.js";
+import { addVectorEmbeddings } from "./data.js";
 import { initializeOso } from "./authz.js";
 
 async function initialize(){
-  await initializeDatabase(),
+  await addVectorEmbeddings();
   await initializeOso();
 }
 
