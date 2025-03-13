@@ -53,6 +53,7 @@ npx supabase start
 ### Initialize the database and Oso Dev Server
 
 ```
+supabase db reset
 npm run initialize
 ```
 
