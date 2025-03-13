@@ -1,5 +1,4 @@
 node_modules
-supabase/.temp
 .vscode
 .env
 .envrc
