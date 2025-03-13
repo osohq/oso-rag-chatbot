@@ -17,7 +17,7 @@ A CLI demo app that uses Oso to authorize context vector embeddings before sendi
 
 1. [Docker Desktop](https://www.docker.com/)
 1. [node.js](https://nodejs.org/en/download)
-1. [Oso Dev Server](https://www.osohq.com/docs/development/oso-dev-server#installation)
+1. Oso Dev Server
     ```bash
     docker run -p '8080:8080' public.ecr.aws/osohq/dev-server:latest
     ```
