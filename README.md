@@ -26,6 +26,7 @@ A CLI demo app that uses Oso to authorize context vector embeddings before sendi
     npx supabase init
     npx supabase start
     ```
+1. An [OpenAI API Key](https://platform.openai.com/api-keys)
 
 ### Clone this repository
 
@@ -48,10 +49,16 @@ cd oso-rag-chatbot
 npm install
 ```
 
+### Set required environment variables
+```
+export DATABASE_URL="postgresql://postgres:postgres@localhost:54322/postgres"
+export OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+```
+
 ### Initialize the database and Oso Dev Server
 
 ```
-supabase db reset
+npx supabase db reset
 npm run initialize
 ```
 
