@@ -154,14 +154,14 @@ feel free to ask!
 By setting the `DEBUG` environment variable, you can emit various information about what the chatbot is doing. This can be useful if you'd like more insight into what's going on under the hood without adding a bunch of `console.log()` statements. For example, if you set `DEBUG` to `main,authz,data`, then you'll see the context, database operations and LLM operations. Examples of each type of logging follow.
 
 **main**:
-```bash
+```
   main I'll send the following additional context: +0ms
   main (Similarity: 0.548) Alice says that Bob is horrible to work with +0ms
   main (Similarity: 0.412) Bob should work on being more collaborative. +0ms
   main (Similarity: 0.355) Bob should contribute more to design and architectur
 ```
 **authz**:
-```bash
+```
   authz Authorization filter query from Oso: +0ms
   authz id IN (WITH RECURSIVE
   authz c0(arg0, arg2) AS NOT MATERIALIZED (
@@ -185,7 +185,7 @@ By setting the `DEBUG` environment variable, you can emit various information ab
   authz ) +0ms
 ```
 **data**:
-```bash
+```
   data Authorized similarity search: +0ms
   data SELECT
   data       id,
@@ -197,12 +197,12 @@ By setting the `DEBUG` environment variable, you can emit various information ab
   data     AND (1 - (embedding::vector <=> promptEmbedding::vector)) > 0.3 +0ms
 ```
 **llm**:
-```bash
+```
   llm Model: text-embedding-3-small +0ms
   llm Prompt: Why did Bob get a bad review? +0ms
 ```
 **embedding**:
-```bash
+```
   embedding Embedding: +0ms
   embedding [
   embedding     -0.02280535,     0.01509199, -0.038275734,  0.027753543, -0.0067892126,
