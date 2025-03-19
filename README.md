@@ -135,7 +135,18 @@ Next, it will prompt you for a question. Enter one of the following:
 The response from the chatbot will depend on your identity and the question you asked. For example, when Diane asks about Bob's review, the response will be something like this:
 
 ```bash
-It seems that Bob received a bad review primarily due to feedback from Alice, who mentioned that he is "horrible to work with." This suggests there are significant issues related to his behavior or collaboration skills in the workplace. Additionally, it was pointed out that Bob should work on being more collaborative, which indicates that perhaps he isn't engaging effectively with his team or contributing positively to group dynamics. Furthermore, there's a suggestion that he needs to contribute more to design and architecture discussions, meaning that his input in critical areas of project development may be lacking. Overall, it looks like the feedback highlights a need for improvement in teamwork and participation in discussions. If you have any more questions about the review process or how to provide support for Bob, feel free to ask!
+It seems that Bob received a bad review primarily due to feedback from Alice,
+who mentioned that he is "horrible to work with. This suggests there are significant
+issues related to his behavior or collaboration skills in the workplace.
+Additionally, it was pointed out that Bob should work on being more collaborative,
+which indicates that perhaps he isn't engaging effectively with his team or contributing
+positively to group dynamics. Furthermore, there's a suggestion that he needs to contribute
+more to design and architecture discussions, meaning that his input in critical areas of
+project development may be lacking. Overall, it looks like the feedback highlights a need
+for improvement in teamwork and participation in discussions.
+
+If you have any more questions about the review process or how to provide support for Bob,
+feel free to ask!
 ```
 
 ### Debug logging
